@@ -44,9 +44,7 @@ An interactive Streamlit app for analyzing, visualizing, clustering, and forecas
 - Displays whether market is currently **open or closed** using timezone logic
 
 ---
-
-## Demo
-
+## DEMO
 
 
 ##  Use Cases
