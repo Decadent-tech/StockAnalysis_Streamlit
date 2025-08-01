@@ -81,6 +81,19 @@ pip install -r requirements.txt
 # Run the app
 streamlit run stockanalyser.py
 
+# Hugging face 
+---
+title: Stock Analyzer Dashboard
+emoji: 📈
+colorFrom: indigo
+colorTo: blue
+sdk: streamlit
+sdk_version: "1.28.0"
+app_file: app.py
+pinned: false
+---
+
+
 # Files
 stockanalyser.py – Main Streamlit app
 requirements.txt – Required Python packages
