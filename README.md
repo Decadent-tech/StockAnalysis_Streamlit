@@ -1,87 +1,3 @@
-#  Stock Analysis & Forecasting Dashboard
-
-An interactive Streamlit app for analyzing, visualizing, clustering, and forecasting stock market trends using machine learning, time series models, technical indicators, and macroeconomic data.
-
----
-
-##  Features
-
-### 1. ** Stock Data Retrieval**
-- Pulls historical stock data from **Yahoo Finance** using `yfinance`
-- Supports Indian (`.NS`, `.BO`) and international tickers
-- Flexible start/end date selection
-
-### 2. **Technical Analysis & Visualization**
-- Daily closing price visualization
-- Moving Averages (7-day & 21-day)
-- Bollinger Bands
-- Volatility (21-day rolling STD)
-- RSI (Relative Strength Index)
-- MACD (Moving Average Convergence Divergence)
-
-### 3. **Forecasting Models**
-- **Linear Regression** using lag-based features
-- **SARIMAX** for time-series forecasting (30-day)
-
-### 4. ** Unsupervised Clustering**
-- **KMeans** clustering using Close & Volume
-- **DBSCAN** for anomaly or density-based grouping
-
-### 5. ** Macroeconomic Overlay**
-- US CPI data integration from FRED
-- Compare macroeconomic trends with stock price movement
-
-### 6. ** Prediction Comparison Dashboard**
-- Compare Linear Regression vs. SARIMAX predictions
-- Evaluation Metrics: R², MAE, RMSE, MSE
-
-### 7. ** Portfolio Simulator**
-- Multi-ticker input with custom weight sliders
-- Simulates cumulative returns from selected tickers
-
-### 8. ** Real-Time Market Status**
-- Auto-detects ticker region (India or US)
-- Displays whether market is currently **open or closed** using timezone logic
-
----
-## DEMO
-
-
-##  Use Cases
-- Analyze stock performance with technical indicators
-- Predict future stock prices using ML and time-series models
-- Identify stock clusters for strategy design
-- Simulate portfolios with multiple global stocks
-- Compare predictive models under different market conditions
-- Monitor stock behavior during open vs. closed markets
-
-## Technical Indicators 
-
-| Category             | Tools & Libraries                              |
-| -------------------- | ---------------------------------------------- |
-| Data Collection      | `yfinance`, `pandas_datareader`                |
-| Data Processing      | `pandas`, `numpy`, rolling statistics          |
-| Visualization        | `Streamlit`, `matplotlib`, `seaborn`           |
-| Technical Indicators | `ta` (RSI, MACD, Bollinger Bands)              |
-| ML Models            | `scikit-learn` (Linear Regression, Clustering) |
-| Time Series Forecast | `statsmodels` (SARIMAX)                        |
-| Macroeconomic Data   | FRED (US CPI) via `pandas_datareader`          |
-| Real-Time Logic      | `pytz`, `datetime`                             |
-
-
-## Installation 
-
-# Clone the repository
-git clone https://github.com/Decadent-tech/StockAnalysis_Streamlit
-cd stock-analysis-dashboard
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run the app
-streamlit run stockanalyser.py
-
-# Hugging face 
 ---
 title: Stock Analyzer Dashboard
 emoji: 📈
@@ -93,16 +9,85 @@ app_file: app.py
 pinned: false
 ---
 
+# Stock Analyzer Dashboard
 
-# Files
-stockanalyser.py – Main Streamlit app
-requirements.txt – Required Python packages
-README.md – Project overview and instructions
+An interactive **Streamlit** app for analyzing, forecasting, and comparing stock market data using machine learning, time series models, and technical indicators.
 
-# License
-This project is open source under the MIT License.
+## Features
 
-# Author
-Developed by Debosmita
+### Price & Technical Analysis
+- Historical stock data from Yahoo Finance
+- Daily returns, 7-day & 21-day Moving Averages
+- Volatility estimation using rolling standard deviation
+- RSI (Relative Strength Index)
+- MACD (Moving Average Convergence Divergence)
 
-Part of a data science portfolio to demonstrate financial analytics, machine learning, and end-to-end app development using Python and Streamlit.
+###  ML Forecasting
+- **Linear Regression** with lagged Close prices
+- **SARIMAX** (Seasonal ARIMA with exogenous variables) for time-series forecasting
+
+### Clustering
+- **KMeans** clustering of stocks based on Close & Volume
+- **DBSCAN** for anomaly and density-based clustering
+
+### Economic Integration
+- FRED API for fetching and overlaying **US CPI** data with stock trends
+
+### Multi-Ticker Comparison
+- Compare multiple tickers side-by-side
+- Correlation heatmap between stocks
+- Downloadable multi-ticker dataset as CSV
+
+### Portfolio Simulator
+- Allocate weights across tickers
+- Simulate and visualize cumulative portfolio returns
+
+---
+
+## How to Use
+
+1. Enter a valid stock ticker (e.g., `TCS`, `RELIANCE`, `AAPL`, etc.)
+2. Choose a valid start and end date
+3. Optionally enter comparison tickers
+4. Explore each tab:
+   - Price metrics and trends
+   - Predictions
+   - Technicals
+   - Economic overlays
+   - Clustering and portfolio simulation
+
+---
+
+## Tech Stack
+
+| Category         | Libraries / Tools                         |
+|------------------|--------------------------------------------|
+| UI & App         | `Streamlit`, `matplotlib`, `seaborn`       |
+| Data Retrieval   | `yfinance`, `pandas_datareader`            |
+| Feature Engg     | `pandas`, `numpy`, `ta`                    |
+| ML Models        | `scikit-learn`, `statsmodels`              |
+| Time & Location  | `datetime`, `pytz`                         |
+| Clustering       | `KMeans`, `DBSCAN`                         |
+
+---
+
+## Project Structure
+
+```
+app.py                 # Main Streamlit dashboard
+requirements.txt       # All required dependencies
+README.md              # Project + Hugging Face config
+```
+
+---
+
+## Try It on Hugging Face
+
+> [![HuggingFace](https://img.shields.io/badge/View%20App-HuggingFace-blue?logo=huggingface)](https://huggingface.co/spaces/riya1chatterjee/StockAnalyzer)
+
+---
+
+## Author
+
+Made by a Data Science enthusiast using real-time stock data and machine learning techniques.  
+_This app is for educational and demo purposes only — not financial advice._
