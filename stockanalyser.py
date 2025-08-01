@@ -15,8 +15,16 @@ from datetime import date, timedelta
 from datetime import datetime, time
 import pytz
 
+# ---------- Helper to Normalize Tickers for Indian Stocks ---------- #
+def get_valid_ticker(ticker):
+    indian_stocks = ["RELIANCE", "TCS", "HDFCBANK", "INFY", "SBIN", "ICICIBANK", "WIPRO", "ITC", "COALINDIA", "ADANIENT"]
+    ticker = ticker.strip().upper()
+    if ticker in indian_stocks:
+        return ticker + ".NS"  # NSE by default
+    return ticker
+
 def is_market_open(ticker):
-    now_utc = datetime.utcnow().replace(tzinfo=pytz.utc)
+    now_utc = datetime.now(pytz.utc)
 
     if ticker.endswith(".NS") or ticker.endswith(".BO"):
         tz = pytz.timezone("Asia/Kolkata")
@@ -39,56 +47,37 @@ def is_market_open(ticker):
         "local_time": now_local.strftime("%Y-%m-%d %H:%M:%S"),
     }
 
-
 def resolve_ticker(ticker: str):
     ticker = ticker.strip().upper()
-    # If user provides suffix like .NS, .BO, .NYQ, etc., use as-is
     if '.' in ticker:
         return ticker
-    
-    # Try Indian NSE first
-    test_ticker = yf.Ticker(ticker + ".NS")
-    hist = test_ticker.history(period="5d")
-    if not hist.empty:
-        return ticker + ".NS"
 
-    # Then try BSE
-    test_ticker = yf.Ticker(ticker + ".BO")
-    hist = test_ticker.history(period="5d")
-    if not hist.empty:
-        return ticker + ".BO"
-
-    # Then try as is (international like AAPL, MSFT)
-    test_ticker = yf.Ticker(ticker)
-    hist = test_ticker.history(period="5d")
-    if not hist.empty:
-        return ticker
-
-    return None  # Failed to resolve
-
-
+    for suffix in [".NS", ".BO", ""]:
+        try:
+            test_ticker = yf.Ticker(ticker + suffix)
+            hist = test_ticker.history(period="5d")
+            if not hist.empty:
+                return ticker + suffix
+        except:
+            continue
+    return None
 
 # ----------------- Sidebar Inputs -----------------
 with st.sidebar:
-    st.title("📊 Stock Dashboard")
-    
-    # Main stock input
-    txt_raw = st.text_input("Enter Stock Ticker (e.g., TCS, AAPL, RELIANCE)", "TCS")
+    st.title(" Stock Dashboard")
+    txt_raw = st.text_input("Enter Main Stock Ticker (e.g., TCS, AAPL, RELIANCE)", "TCS")
     txt = resolve_ticker(txt_raw)
     if not txt:
         st.error("Could not resolve the entered ticker. Please try another.")
         st.stop()
 
-    # Compare stocks
-    tickers_input = st.text_input("Compare Stocks (comma-separated)", "TCS, AAPL, INFY")
-    raw_tickers = [t.strip() for t in tickers_input.split(',')]
-    tickers = [resolve_ticker(t) for t in raw_tickers]
-    tickers = [t for t in tickers if t]  # Remove unresolved ones
+    tickers_input = st.text_input("Compare Stocks (comma-separated)", "TCS, AAPL, RELIANCE")
+    tickers = [get_valid_ticker(t) for t in tickers_input.split(',') if t.strip()]
+
 
     if not tickers:
         st.warning("No valid comparison tickers found.")
 
-    # Date input
     start_date = st.date_input("Start Date")
     end_date = st.date_input("End Date")
 
@@ -96,19 +85,10 @@ with st.sidebar:
         st.error("Start Date must be before End Date.")
         st.stop()
 
-st.sidebar.write("Resolved Main Ticker:", txt)
-st.sidebar.write("Resolved Comparison Tickers:", tickers)
-status = is_market_open(txt)
-status_msg = "🟢 Market is OPEN" if status["is_open"] else "🔴 Market is CLOSED"
-
-with st.sidebar.expander("📈 Market Status"):
-    st.write(f"Exchange: **{status['market']}**")
-    st.write(f"Current Time: {status['local_time']}")
-    st.write(status_msg)
-
-if start_date >= end_date:
-    st.error("Start Date must be before End Date")
-    st.stop()
+    st.sidebar.write("Resolved Main Ticker:", txt)
+    st.sidebar.write("Resolved Comparison Tickers:", tickers)
+    status = is_market_open(txt)
+    status_msg = "\U0001F7E2 Market is OPEN" if status["is_open"] else "\U0001F534 Market is CLOSED"
 
 # ----------------- Fetch Stock Data -----------------
 dat = yf.Ticker(txt)
@@ -173,13 +153,14 @@ with tab3:
 
 with tab4:
     st.subheader("Macroeconomic Indicator: US CPI")
-   
     cpi = web.DataReader('CPIAUCSL', 'fred', start_date, end_date)
+    ticker_df.index = pd.to_datetime(ticker_df.index).tz_localize(None)
+    cpi.index = pd.to_datetime(cpi.index).tz_localize(None)
+    
     st.line_chart(cpi)
     combined = pd.merge(ticker_df.reset_index()[['Date', 'Close']], cpi, left_on='Date', right_index=True, how='inner')
     st.subheader("Close Price vs US CPI")
     st.line_chart(combined.set_index('Date'))
-    
 
 with tab5:
     st.header("KMeans & DBSCAN Clustering")
